@@ -216,7 +216,7 @@ if __name__ == "__main__":
     #     images.append(image)
     #
     # Get Mask
-    mask = np.array(Image.open("./view_01/mask.png").convert('L'))
+    mask = np.array(Image.open("./DiLiGenT-MV/mvpmsData/bearPNG/view_01/mask.png").convert('L'))
     #
     # # Run the Photometric Stereo
     # N, rho = get_surface_normal(images, L[:, start - 1:end])
@@ -241,7 +241,7 @@ if __name__ == "__main__":
     # norm_stereo = photometricStereo.normal_map * 255
 
     # get 3D surface form normal
-    norm_gt = read_data_file('./view_01/Normal_gt.mat')
+    norm_gt = read_data_file('./DiLiGenT-MV/mvpmsData/bearPNG/view_01/Normal_gt.mat')
 
     # plt.imshow(norm_stereo)
     # plt.show()
