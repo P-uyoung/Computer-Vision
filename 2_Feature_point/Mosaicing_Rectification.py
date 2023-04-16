@@ -171,31 +171,49 @@ def main():
     # shape of p_in, p_ref: [N, 2]
     p_in, p_ref = set_cor_mosaic()
 
-    # p_ref = H * p_in
-    H = compute_h_norm(p_ref, p_in)
-    igs_warp, igs_merge = warp_image(igs_in, igs_ref, H)
+    # # p_ref = H * p_in
+    # H = compute_h_norm(p_ref, p_in)
+    # igs_warp, igs_merge = warp_image(igs_in, igs_ref, H)
 
-    # plot images
-    img_warp = Image.fromarray(igs_warp.astype(np.uint8))
-    img_merge = Image.fromarray(igs_merge.astype(np.uint8))
+    # # plot images
+    # img_warp = Image.fromarray(igs_warp.astype(np.uint8))
+    # img_merge = Image.fromarray(igs_merge.astype(np.uint8))
 
-    # save images
-    img_warp.save('wdc1_warped.png')
-    img_merge.save('wdc_merged.png')
-
+    # # save images
+    # img_warp.save('result/wdc1_warped.png')
+    # img_merge.save('result/my_mosaic.png')
+    
+    # Compare my code and openCV
+    import cv2
+    import matplotlib.pyplot as plt
+    from skimage.transform import warp
+    img_in = plt.imread('data/wdc1.png')
+    img_ref = plt.imread('data/wdc2.png')
+    my_mosaic = plt.imread('result/my_mosaic.png')
+    P = cv2.getPerspectiveTransform(p_in[[0,3,4,6]].astype(np.float32), p_ref[[0,3,4,6]].astype(np.float32)) # 특징점 4개 입력받아 투시변환 행렬 반환
+    f_stitched = cv2.warpPerspective(img_in, P, dsize=my_mosaic.shape[:2])
+    plt.imsave('result/mosaic.png', f_stitched)
+    M, N = img_ref.shape[:2]
+    print(f_stitched.shape)
+    f_stitched[0:M, 0:N, :] = img_ref
+    print(f_stitched.shape)
+    plt.imshow(f_stitched)
+    plt.show()
+    plt.imsave('result/cv2_mosaic.png', f_stitched)
+    
     ##############
     # step 2: rectification
     ##############
 
-    img_rec = Image.open('data/iphone.png').convert('RGB')
-    igs_rec = np.array(img_rec)
+    # img_rec = Image.open('data/iphone.png').convert('RGB')
+    # igs_rec = np.array(img_rec)
 
-    c_in, c_ref = set_cor_rec()
+    # c_in, c_ref = set_cor_rec()
 
-    igs_rec = rectify(igs_rec, c_in, c_ref)
+    # igs_rec = rectify(igs_rec, c_in, c_ref)
 
-    img_rec = Image.fromarray(igs_rec.astype(np.uint8))
-    img_rec.save('iphone_rectified.png')
+    # img_rec = Image.fromarray(igs_rec.astype(np.uint8))
+    # img_rec.save('result/iphone_rectified.png')
 
 if __name__ == '__main__':
     main()
