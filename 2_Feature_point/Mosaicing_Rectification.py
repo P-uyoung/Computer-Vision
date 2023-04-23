@@ -27,13 +27,12 @@ def compute_h(p1, p2):
     H = v[s.shape[0]-1].reshape((3,3))
     return H
 
+# Normalization for improving numerical stability 
 def compute_h_norm(p1, p2):
-    # TODO ...
-    # p_1 = H * p_2
     p1 = p1.astype(float)
     p2 = p2.astype(float)
 
-    n = p1.shape[0]
+    n = p1.shape[0]         # keypoint 개수
 
     avg_x1 = np.mean(p1[:,0])
     avg_x2 = np.mean(p2[:,0])
@@ -42,8 +41,9 @@ def compute_h_norm(p1, p2):
     
     sum1 = 0.
     sum2 = 0.
+    # sum of square of distance from each point to the average point
     for i in range(0, n):
-        sum1 += (p1[i,0] - avg_x1) ** 2 + (p1[i,1] - avg_y1) ** 2
+        sum1 += (p1[i,0] - avg_x1) ** 2 + (p1[i,1] - avg_y1) ** 2   
         sum2 += (p2[i,0] - avg_x2) ** 2 + (p2[i,1] - avg_y2) ** 2
     s1 = math.sqrt(2) * n / math.sqrt(sum1)
     s2 = math.sqrt(2) * n / math.sqrt(sum2)
@@ -182,32 +182,32 @@ def main():
     # # p_ref = H * p_in
     H = compute_h_norm(p_ref, p_in)
     print(H)
-    # igs_warp, igs_merge = warp_image(igs_in, igs_ref, H)
+    igs_warp, igs_merge = warp_image(igs_in, igs_ref, H)
 
-    # # plot images
-    # img_warp = Image.fromarray(igs_warp.astype(np.uint8))
-    # img_merge = Image.fromarray(igs_merge.astype(np.uint8))
+    # plot images
+    img_warp = Image.fromarray(igs_warp.astype(np.uint8))
+    img_merge = Image.fromarray(igs_merge.astype(np.uint8))
 
-    # # save images
-    # img_warp.save('result/wdc1_warped.png')
-    # img_merge.save('result/my_mosaic.png')
+    # save images
+    img_warp.save('result/wdc1_warped.png')
+    img_merge.save('result/my_mosaic.png')
     
-    # # Compare my code and openCV
-    # import cv2
-    # from skimage.transform import warp
-    # img_in = plt.imread('data/wdc1.png')
-    # img_ref = plt.imread('data/wdc2.png')
-    # my_mosaic = plt.imread('result/my_mosaic.png')
-    # P = cv2.getPerspectiveTransform(p_in[[0,3,4,6]].astype(np.float32), p_ref[[0,3,4,6]].astype(np.float32)) # 특징점 4개 입력받아 투시변환 행렬 반환
-    # f_stitched = cv2.warpPerspective(img_in, P, dsize=my_mosaic.shape[:2])
-    # plt.imsave('result/mosaic.png', f_stitched)
-    # M, N = img_ref.shape[:2]
-    # print(f_stitched.shape)
-    # f_stitched[0:M, 0:N, :] = img_ref
-    # print(f_stitched.shape)
-    # plt.imshow(f_stitched)
-    # plt.show()
-    # plt.imsave('result/cv2_mosaic.png', f_stitched)
+    # Compare my code and openCV
+    import cv2
+    from skimage.transform import warp
+    img_in = plt.imread('data/wdc1.png')
+    img_ref = plt.imread('data/wdc2.png')
+    my_mosaic = plt.imread('result/my_mosaic.png')
+    P = cv2.getPerspectiveTransform(p_in[[0,3,4,6]].astype(np.float32), p_ref[[0,3,4,6]].astype(np.float32)) # 특징점 4개 입력받아 투시변환 행렬 반환
+    f_stitched = cv2.warpPerspective(img_in, P, dsize=my_mosaic.shape[:2])
+    plt.imsave('result/mosaic.png', f_stitched)
+    M, N = img_ref.shape[:2]
+    print(f_stitched.shape)
+    f_stitched[0:M, 0:N, :] = img_ref
+    print(f_stitched.shape)
+    plt.imshow(f_stitched)
+    plt.show()
+    plt.imsave('result/cv2_mosaic.png', f_stitched)
     
     ##############
     # step 2: rectification
